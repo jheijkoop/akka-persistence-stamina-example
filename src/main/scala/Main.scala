@@ -3,6 +3,9 @@ package goto
 import akka.actor.{ActorSystem, Props}
 import akka.persistence.PersistentActor
 import goto.Parrot.Incremented
+import stamina.{Persistable, StaminaAkkaSerializer, Persisters}
+import stamina.json._
+import stamina.json.SprayJsonMacros._
 
 import scala.concurrent.duration.DurationInt
 
@@ -42,6 +45,14 @@ class Parrot extends PersistentActor {
 }
 
 object Parrot {
-  case class Incremented(count: Int)
+  case class Incremented(count: Int) extends Persistable
   val props = Props[Parrot]
+
+  val parrotPersister = persister[Incremented]("increment")
+}
+
+class PricingAkkaSerializer(persisters: Persisters) extends StaminaAkkaSerializer(persisters) {
+  def this() {
+    this(Persisters(List(Parrot.parrotPersister)))
+  }
 }
