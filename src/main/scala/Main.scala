@@ -3,9 +3,10 @@ package goto
 import akka.actor.{ActorSystem, Props}
 import akka.persistence.PersistentActor
 import goto.Parrot.Incremented
-import stamina.{Persistable, StaminaAkkaSerializer, Persisters}
+import stamina.{V2, V1, Persistable, StaminaAkkaSerializer, Persisters}
 import stamina.json._
 import stamina.json.SprayJsonMacros._
+import spray.json.lenses.JsonLenses._
 
 import scala.concurrent.duration.DurationInt
 
@@ -33,22 +34,25 @@ class Parrot extends PersistentActor {
 
   override def receiveCommand: Receive = {
     case message: String =>
-      persist(Incremented(count + 1))(incremented => update(incremented))
+      persist(Incremented(count + 1, message))(incremented => update(incremented))
       println(s"$count: $message")
   }
 
   def update: Receive = {
-    case Incremented(newCount) => count = newCount
+    case Incremented(newCount, message) => count = newCount
   }
 
   override def persistenceId = "parrot"
 }
 
 object Parrot {
-  case class Incremented(count: Int) extends Persistable
+  case class Incremented(count: Int, message: String) extends Persistable
   val props = Props[Parrot]
 
-  val parrotPersister = persister[Incremented]("increment")
+  val parrotPersister = persister[Incremented, V2](
+    "increment",
+    from[V1].to[V2](_.update('message ! set[String]("[empty message]")))
+  )
 }
 
 class PricingAkkaSerializer(persisters: Persisters) extends StaminaAkkaSerializer(persisters) {
