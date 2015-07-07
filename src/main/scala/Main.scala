@@ -51,7 +51,10 @@ object Parrot {
 
   val parrotPersister = persister[Incremented, V2](
     "increment",
-    from[V1].to[V2](_.update('message ! set[String]("[empty message]")))
+    from[V1]
+      .to[V2](_.update('message ! set[String]("[empty message]")))
+      .to[V3](_.update('message ! set[String]("[empty message]")))
+      .to[V4](_.update('message ! set[String]("[empty message]")))
   )
 }
 
