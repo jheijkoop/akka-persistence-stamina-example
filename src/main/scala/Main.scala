@@ -1,8 +1,8 @@
-package goto
+package stamina.demo
 
 import akka.actor.{ActorSystem, Props}
 import akka.persistence.PersistentActor
-import goto.Parrot.Incremented
+import stamina.demo.Parrot.Incremented
 import stamina.{V2, V1, Persistable, StaminaAkkaSerializer, Persisters}
 import stamina.json._
 import stamina.json.SprayJsonMacros._

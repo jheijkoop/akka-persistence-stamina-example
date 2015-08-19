@@ -1,4 +1,4 @@
-name := "Akka Persistence Demo"
+name := "Akka Persistence Stamina Demo"
 scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
