@@ -1,12 +1,6 @@
 package goto
 
-import akka.actor.{ActorSystem, Props}
-import akka.persistence.PersistentActor
-import goto.Parrot.Incremented
-import stamina.{V2, V1, Persistable, StaminaAkkaSerializer, Persisters}
-import stamina.json._
-import stamina.json.SprayJsonMacros._
-import spray.json.lenses.JsonLenses._
+import akka.actor.{Actor, ActorSystem, Props}
 
 import scala.concurrent.duration.DurationInt
 
@@ -25,41 +19,14 @@ object Main extends App {
   }
 }
 
-class Parrot extends PersistentActor {
+class Parrot extends Actor {
   var count = 0
 
-  override def receiveRecover: Receive = {
-    case event: Incremented => update(event)
+  def receive = {
+    case message: String => println(s"$count: $message")
   }
-
-  override def receiveCommand: Receive = {
-    case message: String =>
-      persist(Incremented(count + 1, message))(incremented => update(incremented))
-      println(s"$count: $message")
-  }
-
-  def update: Receive = {
-    case Incremented(newCount, message) => count = newCount
-  }
-
-  override def persistenceId = "parrot"
 }
 
 object Parrot {
-  case class Incremented(count: Int, message: String) extends Persistable
   val props = Props[Parrot]
-
-  val parrotPersister = persister[Incremented, V2](
-    "increment",
-    from[V1]
-      .to[V2](_.update('message ! set[String]("[empty message]")))
-      .to[V3](_.update('message ! set[String]("[empty message]")))
-      .to[V4](_.update('message ! set[String]("[empty message]")))
-  )
-}
-
-class PricingAkkaSerializer(persisters: Persisters) extends StaminaAkkaSerializer(persisters) {
-  def this() {
-    this(Persisters(List(Parrot.parrotPersister)))
-  }
 }
