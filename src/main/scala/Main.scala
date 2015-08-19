@@ -1,4 +1,4 @@
-package goto
+package stamina.demo
 
 import akka.actor.{Actor, ActorSystem, Props}
 
