@@ -1,9 +1,9 @@
-package stamina.demo
+package jheijkoop.stamina.demo
 
 import akka.actor.{ActorSystem, Props}
 import akka.persistence.PersistentActor
+import jheijkoop.stamina.demo.Parrot.Incremented
 import spray.json.lenses.JsonLenses._
-import stamina.demo.Parrot.Incremented
 import stamina.json.SprayJsonMacros._
 import stamina.json._
 import stamina.{Persistable, Persisters, StaminaAkkaSerializer, V1, V2}
@@ -56,7 +56,7 @@ object Parrot {
   )
 }
 
-class PricingAkkaSerializer(persisters: Persisters) extends StaminaAkkaSerializer(persisters) {
+class ParrotSerializer(persisters: Persisters) extends StaminaAkkaSerializer(persisters) {
   def this() {
     this(Persisters(List(Parrot.parrotPersister)))
   }
