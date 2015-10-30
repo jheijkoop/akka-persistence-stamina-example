@@ -2,11 +2,11 @@ package jheijkoop.stamina.demo
 
 import akka.actor.{ActorSystem, Props}
 import akka.persistence.PersistentActor
+import fommil.sjs.FamilyFormats._
 import jheijkoop.stamina.demo.Parrot.Incremented
 import spray.json.lenses.JsonLenses._
-import fommil.sjs.FamilyFormats._
 import stamina.json._
-import stamina.{Persistable, Persisters, StaminaAkkaSerializer, V1, V2}
+import stamina.{Persistable, StaminaAkkaSerializer, V1, V2}
 
 import scala.concurrent.duration.DurationInt
 
